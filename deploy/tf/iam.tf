@@ -51,4 +51,12 @@ resource "google_secret_manager_secret_iam_binding" "cloudbuild_access" {
   ]
 }
 
+resource "google_secret_manager_secret_iam_binding" "terraform_admin" {
+  project   = data.google_project.project.number
+  secret_id = var.github_pat_secret_id
+  role      = "roles/secretmanager.admin"
 
+  members = [
+    "serviceAccount:${google_service_account.cicd_runner_sa.email}"
+  ]
+}
