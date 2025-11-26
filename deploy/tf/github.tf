@@ -25,9 +25,7 @@ resource "google_cloudbuildv2_connection" "github_connection" {
       oauth_token_secret_version = data.google_secret_manager_secret_version_access.github_token.id
     }
   }
-  depends_on = [
-    # google_secret_manager_secret_iam_member.cloudbuild_secret_accessor,
-    resource.google_project_service.apis]
+  depends_on = [resource.google_project_service.apis]
 }
 
 # Try to get existing repo
@@ -40,9 +38,9 @@ resource "google_cloudbuildv2_repository" "repo" {
   project  = var.project_id
   location = var.cb_region
   name     = var.repository_name
-  
+
   parent_connection = one(google_cloudbuildv2_connection.github_connection[*].id)
-  remote_uri       = "https://github.com/${var.repository_owner}/${var.repository_name}.git"
+  remote_uri        = "https://github.com/${var.repository_owner}/${var.repository_name}.git"
   depends_on = [
     resource.google_project_service.apis,
     data.github_repository.existing_repo

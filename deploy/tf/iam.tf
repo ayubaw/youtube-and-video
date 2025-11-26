@@ -40,3 +40,13 @@ resource "google_service_account_iam_member" "cicd_runner_actas_compute_sa" {
   role               = "roles/iam.serviceAccountUser" # The role being granted
   member             = "serviceAccount:${google_service_account.cicd_runner_sa.email}"
 }
+
+resource "google_secret_manager_secret_iam_binding" "cloudbuild_access" {
+  project   = data.google_project.project.number
+  secret_id = var.github_pat_secret_id
+  role      = "roles/secretmanager.secretAccessor"
+
+  members = [
+    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloudbuild.iam.gserviceaccount.com"
+  ]
+}

@@ -67,7 +67,7 @@ substitutions:
   _REPO_OWNER: some-dude
   _SERVICE_NAME: video-intelligence
   _ARTIFACT_REPO_NAME: video-intelligence
-  _GITHUB_APP_INSTALLATION_ID: "12345678"
+  _GITHUB_APP_INSTALLATION_ID: "96391224"
   _GITHUB_PAT_SECRET_ID: github-pat
   _BRANCH: dev
   _LOG_LEVEL: DEBUG

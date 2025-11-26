@@ -2,7 +2,7 @@
 resource "google_cloudbuild_trigger" "app_cicd_trigger" {
   project = var.project_id
   location = var.cb_region # CB has quote restrictions in certain regions
-  name    = "deploy-video-intelligence-svc"
+  name    = "deploy-${var.service_name}-svc"
   service_account = resource.google_service_account.cicd_runner_sa.id
   description = "Trigger for ${var.trigger_branch_name} application deployment"
 
