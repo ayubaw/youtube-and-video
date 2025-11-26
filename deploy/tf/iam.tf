@@ -51,3 +51,4 @@ resource "google_secret_manager_secret_iam_binding" "cloudbuild_access" {
   ]
 }
 
+
