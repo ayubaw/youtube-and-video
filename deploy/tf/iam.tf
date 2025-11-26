@@ -50,3 +50,4 @@ resource "google_secret_manager_secret_iam_binding" "cloudbuild_access" {
     "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloudbuild.iam.gserviceaccount.com"
   ]
 }
+
