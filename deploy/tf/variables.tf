@@ -85,4 +85,5 @@ variable "trigger_branch_name" {
 variable "repository_name_app" {
   description = "The name of the application repository"
   type        = string
+#   default     = "YV-app" # Default might be dev, override for main
 }
