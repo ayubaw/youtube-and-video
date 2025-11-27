@@ -79,7 +79,7 @@ variable "artifact_repo_name" {
 variable "trigger_branch_name" {
   description = "The git branch name that should activate this trigger."
   type        = string
-  default     = "dev" # Default might be dev, override for main
+#   default     = "dev" # Default might be dev, override for main
 }
 
 variable "repository_name_app" {
