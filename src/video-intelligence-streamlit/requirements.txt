@@ -1,3 +1,0 @@
-streamlit
-pytubefix
-google-cloud-aiplatform
