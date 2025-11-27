@@ -60,8 +60,8 @@ steps:
 # Default substitution values. These can be overridden by trigger settings or manual runs.
 substitutions:
   _TF_STATE_BUCKET: $PROJECT_ID-tfstate
-  _DEPLOY_REGION: europe-west4
-  _CB_REGION: europe-west4
+  _DEPLOY_REGION: europe-west2
+  _CB_REGION: europe-west2
   _ORG: some-org
   _REPO_NAME: youtube-and-video
   _REPO_OWNER: some-dude

@@ -33,8 +33,28 @@ data "github_repository" "existing_repo" {
   full_name = "${var.repository_owner}/${var.repository_name}"
 }
 
-# Link the GitHub repo to the Cloud Build connection
-resource "google_cloudbuildv2_repository" "repo" {
+resource "google_cloudbuildv2_connection" "github_connection_app" {
+  count      = var.connection_exists ? 0 : 1
+  project    = var.project_id
+  location   = var.cb_region
+  name       = "github-connection-app"
+
+  github_config {
+    app_installation_id = var.github_app_installation_id
+    authorizer_credential {
+      oauth_token_secret_version = data.google_secret_manager_secret_version_access.github_token.id
+    }
+  }
+  depends_on = [resource.google_project_service.apis]
+}
+
+# Try to get existing repo for app
+data "github_repository" "existing_repo_app" {
+  full_name = "${var.repository_owner}/${var.repository_name_app}"
+}
+
+# Link the IaC GitHub repo to the Cloud Build connection
+resource "google_cloudbuildv2_repository" "repo_iac" {
   project  = var.project_id
   location = var.cb_region
   name     = var.repository_name
@@ -44,5 +64,18 @@ resource "google_cloudbuildv2_repository" "repo" {
   depends_on = [
     resource.google_project_service.apis,
     data.github_repository.existing_repo
+  ]
+}
+
+resource "google_cloudbuildv2_repository" "repo_app" {
+  project  = var.project_id
+  location = var.cb_region
+  name     = var.repository_name
+
+  parent_connection = one(google_cloudbuildv2_connection.github_connection_app[*].id)
+  remote_uri        = "https://github.com/${var.repository_owner}/${var.repository_name_app}.git"
+  depends_on = [
+    resource.google_project_service.apis,
+    data.github_repository.existing_repo_app
   ]
 }

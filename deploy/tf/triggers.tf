@@ -7,13 +7,13 @@ resource "google_cloudbuild_trigger" "app_cicd_trigger" {
   description = "Trigger for ${var.trigger_branch_name} application deployment"
 
   repository_event_config {
-    repository = google_cloudbuildv2_repository.repo.id
+    repository = google_cloudbuildv2_repository.repo_app.id
     push {
       branch = "^${var.trigger_branch_name}$"
     }
   }
 
-  filename = "deploy/cloudbuild.yaml"
+  filename = "cloudbuild.yaml"
   included_files = [
     "src/**",
     "tests/**",
@@ -33,7 +33,7 @@ resource "google_cloudbuild_trigger" "app_cicd_trigger" {
     _CICD_RUNNER_SA_EMAIL           = "${var.cicd_runner_sa_name}@${var.project_id}.iam.gserviceaccount.com"
   }
 
-  depends_on = [resource.google_project_service.apis, google_cloudbuildv2_repository.repo]
+  depends_on = [resource.google_project_service.apis, google_cloudbuildv2_repository.repo_app]
 
   tags = [
     var.service_name, 
@@ -55,7 +55,7 @@ resource "google_cloudbuild_trigger" "tf_trigger" {
   description     = "Trigger for ${var.trigger_branch_name} Terraform infrastructure deployment"
 
   repository_event_config {
-    repository = google_cloudbuildv2_repository.repo.id
+    repository = google_cloudbuildv2_repository.repo_iac.id
     push {
       branch = "^${var.trigger_branch_name}$"
     }
@@ -85,7 +85,7 @@ resource "google_cloudbuild_trigger" "tf_trigger" {
     _CICD_RUNNER_SA_EMAIL         = "${var.cicd_runner_sa_name}@${var.project_id}.iam.gserviceaccount.com"
   }
 
-  depends_on = [resource.google_project_service.apis, google_cloudbuildv2_repository.repo]
+  depends_on = [resource.google_project_service.apis, google_cloudbuildv2_repository.repo_iac]
 
   tags = [
     "terraform-managed",

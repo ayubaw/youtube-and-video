@@ -8,13 +8,13 @@ variable "project_id" {
 variable "region" {
   description = "The Google Cloud region for deployment."
   type        = string
-  default     = "europe-west4"
+  default     = "europe-west2"
 }
 
 variable "cb_region" {
   description = "The Google Cloud region where Cloud Build will run."
   type        = string
-  default     = "europe-west1"
+  default     = "europe-west2"
 }
 
 variable "my_org" {
@@ -80,4 +80,9 @@ variable "trigger_branch_name" {
   description = "The git branch name that should activate this trigger."
   type        = string
   default     = "dev" # Default might be dev, override for main
+}
+
+variable "repository_name_app" {
+  description = "The name of the application repository"
+  type        = string
 }

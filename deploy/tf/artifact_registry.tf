@@ -1,6 +1,6 @@
 # Create Artifact Registry repository for Docker images
 
-resource "google_artifact_registry_repository" "repo" {
+resource "google_artifact_registry_repository" "artifact_reg_repo" {
   project       = var.project_id
   location      = var.cb_region
   repository_id = var.service_name
