@@ -52,7 +52,9 @@ resource "google_cloudbuildv2_connection" "github_connection_app" {
 data "github_repository" "existing_repo_app" {
   full_name = "${var.repository_owner}/${var.repository_name_app}"
 }
-
+output "repository_name_app"{
+    value=var.repository_name_app
+}
 # Link the IaC GitHub repo to the Cloud Build connection
 resource "google_cloudbuildv2_repository" "repo_iac" {
   project  = var.project_id
