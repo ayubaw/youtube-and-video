@@ -64,13 +64,14 @@ substitutions:
   _CB_REGION: europe-west2
   _ORG: some-org
   _REPO_NAME: youtube-and-video
-  _REPO_OWNER: some-dude
+  _REPO_OWNER: var.repository_owner
   _SERVICE_NAME: video-intelligence
   _ARTIFACT_REPO_NAME: video-intelligence
   _GITHUB_APP_INSTALLATION_ID: "96391224"
   _GITHUB_PAT_SECRET_ID: github-pat
-  _BRANCH: dev
+  _BRANCH: var.trigger_branch_name
   _LOG_LEVEL: DEBUG
+  _REPOSITORY_NAME_APP: var.repository_name_app
 
 # Build options
 options:
