@@ -20,6 +20,9 @@ resource "google_cloudbuild_trigger" "app_cicd_trigger" {
   # INLINE BUILD STEPS
   # --------------------------
   build {
+    options {
+      logging = "CLOUD_LOGGING_ONLY"  # Add this
+    }
 
     # 1. Build container
     step {
@@ -85,6 +88,9 @@ resource "google_cloudbuild_trigger" "tf_trigger" {
   }
   # INLINE BUILD STEPS (instead of cloudbuild-tf.yaml)
   build {
+    options {
+      logging = "CLOUD_LOGGING_ONLY"  # Add this
+    }
     step {
       id = "TF Init"
       name = "hashicorp/terraform:1.10"
