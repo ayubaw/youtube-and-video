@@ -7,24 +7,18 @@ resource "google_cloudbuild_trigger" "app_cicd_trigger" {
   service_account = google_service_account.cicd_runner_sa.id
 
   # GitHub repo for the app
-  github {
-    owner = var.repository_owner
-    name  = var.repository_name_app
-
+  repository_event_config {
+    repository = google_cloudbuildv2_repository.repo_app.id
     push {
       branch = "^${var.trigger_branch_name}$"
     }
   }
 
-  # --------------------------
-  # INLINE BUILD STEPS
-  # --------------------------
   build {
     options {
-      logging = "CLOUD_LOGGING_ONLY"  # Add this
+      logging = "CLOUD_LOGGING_ONLY"
     }
 
-    # 1. Build container
     step {
       id         = "Build Image"
       name       = "gcr.io/cloud-builders/docker"
@@ -39,7 +33,6 @@ resource "google_cloudbuild_trigger" "app_cicd_trigger" {
       ]
     }
 
-    # 2. Push image to Artifact Registry
     step {
       id   = "Push Image"
       name = "gcr.io/cloud-builders/docker"
@@ -52,7 +45,6 @@ resource "google_cloudbuild_trigger" "app_cicd_trigger" {
       ]
     }
 
-    # 3. Deploy to Cloud Run
     step {
       id         = "Deploy to Cloud Run"
       name       = "gcr.io/google.com/cloudsdktool/cloud-sdk"
@@ -70,7 +62,6 @@ resource "google_cloudbuild_trigger" "app_cicd_trigger" {
 
   tags = ["app", "cloud-run", var.trigger_branch_name]
 }
-
 
 # Trigger for infrastructure deployment using Terraform
 resource "google_cloudbuild_trigger" "tf_trigger" {
