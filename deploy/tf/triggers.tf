@@ -60,40 +60,40 @@ resource "google_cloudbuild_trigger" "tf_trigger" {
       branch = "^${var.trigger_branch_name}$"
     }
   }
-
-  filename       = "deploy/cloudbuild-tf.yaml" # Point to the Terraform Cloud Build file
-  included_files = [
-    "deploy/**", # Trigger only on changes within the deploy directory
-  ]
-
-  ignored_files = ["README.md"] # Ignore other folders
-
-  # Define substitutions required by cloudbuild-tf.yaml
-  substitutions = {
-    _TF_STATE_BUCKET              = "${var.project_id}-tfstate"
-    _DEPLOY_REGION                = var.region
-    _CB_REGION                    = var.cb_region
-    _ORG                          = var.my_org
-    _SERVICE_NAME                 = var.service_name
-    _ARTIFACT_REPO_NAME           = var.artifact_repo_name
-    _REPO_NAME                    = var.repository_name
-    _REPO_OWNER                   = var.repository_owner
-    _GITHUB_APP_INSTALLATION_ID   = var.github_app_installation_id
-    _GITHUB_PAT_SECRET_ID         = var.github_pat_secret_id
-    _BRANCH                       = var.trigger_branch_name
-    _LOG_LEVEL                    = var.log_level
-    _CICD_RUNNER_SA_EMAIL         = "${var.cicd_runner_sa_name}@${var.project_id}.iam.gserviceaccount.com"
+  # ⭐ INLINE BUILD STEPS (instead of cloudbuild-tf.yaml)
+  build {
+    step {
+      id = "TF Init"
+      name = "hashicorp/terraform:1.10"
+      entrypoint = "sh"
+      dir = "deploy/tf"
+      args = ["-c", <<-EOF
+        terraform init \
+          -backend-config=bucket=${var.project_id}-tfstate \
+          -backend-config=prefix=terraform/state/dev
+        EOF
+      ]
+    }
+    step {
+      id = "TF Plan"
+      name = "hashicorp/terraform:1.10"
+      entrypoint = "sh"
+      dir = "deploy/tf"
+      args = ["-c", <<-EOF
+        terraform plan \
+          -var-file=vars/dev.tfvars \
+          -out=tfplan
+        EOF
+      ]
+    }
+    step {
+      id = "TF Apply"
+      name = "hashicorp/terraform:1.10"
+      entrypoint = "sh"
+      dir = "deploy/tf"
+      args = ["-c", "terraform apply -auto-approve tfplan"]
+    }
   }
 
-  depends_on = [resource.google_project_service.apis, google_cloudbuildv2_repository.repo_iac]
-
-  tags = [
-    "terraform-managed",
-    "infra-deployment",
-    var.trigger_branch_name # Tag with the branch/environment
-  ]
-
-  lifecycle {
-    prevent_destroy = false # Set to true in production if desired
-  }
+  tags = ["iac", "terraform"]
 }
