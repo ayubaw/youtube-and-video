@@ -17,7 +17,6 @@ resource "google_cloudbuild_trigger" "app_cicd_trigger" {
   build {
     options {
       logging = "CLOUD_LOGGING_ONLY"
-      default_logs_bucket_behavior = "REGIONAL_USER_OWNED_BUCKET"
     }
 
     step {
@@ -82,7 +81,6 @@ resource "google_cloudbuild_trigger" "tf_trigger" {
   build {
     options {
       logging = "CLOUD_LOGGING_ONLY"  # Add this
-      default_logs_bucket_behavior = "REGIONAL_USER_OWNED_BUCKET"
     }
     step {
       id = "TF Init"
