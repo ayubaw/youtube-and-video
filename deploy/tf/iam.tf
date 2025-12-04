@@ -41,6 +41,7 @@ resource "google_service_account_iam_member" "cicd_runner_actas_compute_sa" {
   member             = "serviceAccount:${google_service_account.cicd_runner_sa.email}"
 }
 
+
 resource "google_secret_manager_secret_iam_binding" "cloudbuild_access" {
   project   = data.google_project.project.number
   secret_id = var.github_pat_secret_id
@@ -51,9 +52,21 @@ resource "google_secret_manager_secret_iam_binding" "cloudbuild_access" {
   ]
 }
 
-resource "google_project_iam_member" "tf_secret_iam_admin" {
-  project = data.google_project.project.project_id
-  role    = "roles/secretmanager.iamAdmin"
+#Create custom role to avoid using admin role for terraform
+resource "google_project_iam_custom_role" "tf_secret_iam_role" {
+  role_id     = "tfSecretIamManager"
+  title       = "Terraform Secret IAM Manager"
+  description = "Minimal IAM permissions Terraform needs on Secret Manager"
+  project     = var.project_id
 
-  member  = "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
+  permissions = [
+    "secretmanager.secrets.getIamPolicy",
+    "secretmanager.secrets.setIamPolicy",
+  ]
+}
+#Give terraform CICD SA the custom role on the project
+resource "google_project_iam_member" "tf_secret_iam_bind" {
+  project = var.project_id
+  role    = "projects/${var.project_id}/roles/tfSecretIamManager"
+  member  = "serviceAccount:${google_service_account.cicd_runner_sa.email}"
 }
