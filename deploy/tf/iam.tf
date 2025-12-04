@@ -50,3 +50,10 @@ resource "google_secret_manager_secret_iam_binding" "cloudbuild_access" {
     "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloudbuild.iam.gserviceaccount.com"
   ]
 }
+
+resource "google_project_iam_member" "tf_secret_iam_admin" {
+  project = data.google_project.project.project_id
+  role    = "roles/secretmanager.iamAdmin"
+
+  member  = "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
+}
